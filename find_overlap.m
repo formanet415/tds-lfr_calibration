@@ -25,7 +25,7 @@ for i = times
     iL = find_index(i,lfr,lfrtimes);
     if iT ~= 0 && iL ~= 0
         disp('-----------match found-----------')
-        compare_signal(lfr,tds,iT,iL);
+        compare_signal(lfr,tds,iT,iL,i);
     end
 end
 
