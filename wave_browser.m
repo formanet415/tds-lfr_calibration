@@ -1,6 +1,6 @@
 load('tds_tswf_iaw_times.mat')
-wa_times = data.ep;
-wa_times = spdfencodett2000(wa_times);
+wa_times = spdfdatenumtott2000(data.ep);
+wa_times = char(spdfencodett2000(wa_times));
 
 unique = 0;
 day = '';
