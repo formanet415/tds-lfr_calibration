@@ -19,6 +19,6 @@ for i = 1:size(wa_times,1)
 end
 days = char(days);
 [num, id] = max(recs);
-most_waves = days(id,:);
-date = '2020-11-30';
+%most_waves = days(id,:); 
+date = '2020-07-18';
 
