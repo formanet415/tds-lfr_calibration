@@ -21,4 +21,19 @@ days = char(days);
 [num, id] = max(recs);
 %most_waves = days(id,:); 
 date = '2020-07-18';
+worthy = days(recs>99,:);
 
+lags = [];
+lagtimes = [];
+for i = string(worthy)'
+    disp(i)
+    [lag,lagtime] = find_overlap(i);
+    if lag~=0
+        for j = lag
+            lags(end+1) = j;
+        end
+        for j = lagtime
+            lagtimes(end+1) = j;
+        end
+    end
+end

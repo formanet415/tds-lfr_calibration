@@ -1,8 +1,7 @@
-function compare_signal(lfr,tds,iT,iL,time, plotit)
+function tlag = compare_signal(lfr,tds,iT,iL,time, plotit)
 %COMPARE_SIGNAL Plotter function for both tds and lfr data
 
-
-
+tlag = false;
 lt0 = double(spdfdatenumtott2000(lfr.Epoch.data(iL)));
 tt0 = double(spdfdatenumtott2000(tds.Epoch.data(iT)));
 lSamps = double(2048);
@@ -27,8 +26,8 @@ end
 
 time = spdftt2000todatenum(time);
 wave = spdfencodett2000(time);
+nam = erase(wave,':');
 if plotit==1
-    figure;
     plot(lt, ldata,'DisplayName','LFR data')
     datetick('x', 'MM:SS:FFF', 'keeplimits', 'keepticks')
     hold on
@@ -38,7 +37,8 @@ if plotit==1
     ylabel('voltage (V)')
     xlabel('time')
     legend()
-    hold off
+    saveas(gcf,sprintf('plots/%soriginal_data.png', nam))
+    close(gcf)
 end
 
 
@@ -52,12 +52,35 @@ q = size(cutlt,1);
 cutldata = resample(cutldata, p, q);
 cutlt = resample(cutlt, p, q);
 
-[r,lags] = xcorr(cutldata,tdata);
+[r,lags] = xcorr(tdata,cutldata);
 [d, lagindx] = max(r);
 slag = lags(lagindx);
 tlag = slag/tsr;
 relative_lag = tlag*lsr;
 fprintf('lag in seconds %es\n',tlag);
 fprintf('relative lag is %f lfr samples\n', relative_lag)
+
+
+if plotit==1
+    plot(tt, cutldata,'DisplayName','unshifted LFR data')
+    datetick('x', 'MM:SS:FFF', 'keeplimits', 'keepticks')
+    hold on
+    if slag>0
+         plot(tt(1+slag:end), cutldata(1:end-slag),'DisplayName','shifted LFR data')
+    end
+    if slag<0
+         plot(tt(1:end+slag), cutldata(1-slag:end),'DisplayName','shifted LFR data')
+    end
+   
+    plot(tt, tdata,'DisplayName','TDS data')
+    title(sprintf('TDS and LFR waveforms with an event at %s', wave))
+    ylabel('voltage (V)')
+    xlabel('time')
+    legend()
+    saveas(gcf,sprintf('plots/%sshifted_data.png', nam))
+    %close(gcf)
+    hold off
+end
+
 end
 

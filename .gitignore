@@ -1,3 +1,4 @@
 
 *.cdf
 *.asv
+plots/*

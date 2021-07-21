@@ -1,4 +1,4 @@
-function find_overlap(date, varargin)
+function [lags, lagtimes] = find_overlap(date, varargin)
 %FIND_OVERLAP This function finds places where there is an overlap between
 %lfr and tds data and then plots out both. 
 
@@ -23,20 +23,28 @@ for i = 1:size(wa_times,1)
         times(end+1) = Ep(i);
     end
 end
-
-%tds = cdf_from_server(str2num(date(1:4)),str2num(date(6:7)),str2num(date(9:10)),'tswf');
-%lfr = cdf_from_server(str2num(date(1:4)),str2num(date(6:7)),str2num(date(9:10)),'lfr-e');
-tds = cdf_load_tswf('cdfs/solo_L2_rpw-tds-surv-tswf-e-cdag_20200718_V26.cdf');
-lfr = cdf_load_tswf('cdfs/solo_L2_rpw-lfr-surv-swf-e-cdag_20200718_V26.cdf');
+if ~ischar(date)
+    date = char(date);
+end
+tds = cdf_from_server(str2num(date(1:4)),str2num(date(6:7)),str2num(date(9:10)),'tswf');
+lfr = cdf_from_server(str2num(date(1:4)),str2num(date(6:7)),str2num(date(9:10)),'lfr-e');
+%tds = cdf_load_tswf('cdfs/solo_L2_rpw-tds-surv-tswf-e-cdag_20200718_V26.cdf');
+%lfr = cdf_load_tswf('cdfs/solo_L2_rpw-lfr-surv-swf-e-cdag_20200718_V26.cdf');
 
 
 tdstimes = spdfdatenumtott2000(tds.Epoch.data);
 lfrtimes = spdfdatenumtott2000(lfr.Epoch.data);
+lags = [];
+lagtimes = [];
 for i = times
     iT = find_index(i,tds,tdstimes);
     iL = find_index(i,lfr,lfrtimes);
     if iT ~= 0 && iL ~= 0
-        compare_signal(lfr,tds,iT,iL,i, plotit);
+        lag = compare_signal(lfr,tds,iT,iL,i, plotit);
+        if ~islogical(lag)
+            lags(end+1) = lag;
+            lagtimes(end+1) = i;
+        end
     end
 end
 
