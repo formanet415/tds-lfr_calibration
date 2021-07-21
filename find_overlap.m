@@ -1,6 +1,18 @@
-function find_overlap(date)
+function find_overlap(date, varargin)
 %FIND_OVERLAP This function finds places where there is an overlap between
 %lfr and tds data and then plots out both. 
+
+plotit = 1;
+while ~isempty(varargin)
+    switch lower(varargin{1})
+        case 'plotit'
+            plotit = varargin{2};
+        otherwise
+            error(['Unexpected option: ' varargin{1}])
+    end
+    varargin(1:2) = [];
+end
+
 load('tds_tswf_iaw_times.mat')
 Ep = spdfdatenumtott2000(data.ep);
 wa_times = char(spdfencodett2000(Ep));
@@ -24,8 +36,7 @@ for i = times
     iT = find_index(i,tds,tdstimes);
     iL = find_index(i,lfr,lfrtimes);
     if iT ~= 0 && iL ~= 0
-        disp('-----------match found-----------')
-        compare_signal(lfr,tds,iT,iL,i);
+        compare_signal(lfr,tds,iT,iL,i, plotit);
     end
 end
 

@@ -1,5 +1,7 @@
-function compare_signal(lfr,tds,iT,iL,time)
+function compare_signal(lfr,tds,iT,iL,time, plotit)
 %COMPARE_SIGNAL Plotter function for both tds and lfr data
+
+
 
 lt0 = double(spdfdatenumtott2000(lfr.Epoch.data(iL)));
 tt0 = double(spdfdatenumtott2000(tds.Epoch.data(iT)));
@@ -23,11 +25,39 @@ if lsr<500
     return
 end
 
-figure;
-plot(lt, ldata)
-datetick('x', 'MM:SS:FFF', 'keeplimits', 'keepticks')
-hold on
-plot(tt, tdata)
+time = spdftt2000todatenum(time);
+wave = spdfencodett2000(time);
+if plotit==1
+    figure;
+    plot(lt, ldata,'DisplayName','LFR data')
+    datetick('x', 'MM:SS:FFF', 'keeplimits', 'keepticks')
+    hold on
+    plot(tt, tdata,'DisplayName','TDS data')
+    xline(time,'DisplayName','wave detected')
+    title(sprintf('TDS and LFR waveforms with an event at %s', wave))
+    ylabel('voltage (V)')
+    xlabel('time')
+    legend()
+    hold off
+end
 
+
+[d, iL0] = min(abs(lt-tt(1)));
+[d, iL1] = min(abs(lt-tt(end)));
+
+cutldata = double(ldata(iL0:iL1));
+cutlt = lt(iL0:iL1);
+p = size(tt,1);
+q = size(cutlt,1);
+cutldata = resample(cutldata, p, q);
+cutlt = resample(cutlt, p, q);
+
+[r,lags] = xcorr(cutldata,tdata);
+[d, lagindx] = max(r);
+slag = lags(lagindx);
+tlag = slag/tsr;
+relative_lag = tlag*lsr;
+fprintf('lag in seconds %es\n',tlag);
+fprintf('relative lag is %f lfr samples\n', relative_lag)
 end
 
