@@ -25,7 +25,8 @@ worthy = days(recs>99,:);
 
 lags = [];
 lagtimes = [];
-for i = string(worthy)'
+load('days_with_lags.mat')
+for i = string(days)'
     disp(i)
     [lag,lagtime] = find_overlap(i);
     if lag~=0

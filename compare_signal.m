@@ -28,17 +28,19 @@ time = spdftt2000todatenum(time);
 wave = spdfencodett2000(time);
 nam = erase(wave,':');
 if plotit==1
+    f = figure('Position', [100 100 1600 1000]);
+    plot(tt, tdata,'DisplayName','TDS data')
+    hold on
     plot(lt, ldata,'DisplayName','LFR data')
     datetick('x', 'MM:SS:FFF', 'keeplimits', 'keepticks')
-    hold on
-    plot(tt, tdata,'DisplayName','TDS data')
     xline(time,'DisplayName','wave detected')
     title(sprintf('TDS and LFR waveforms with an event at %s', wave))
     ylabel('voltage (V)')
     xlabel('time')
     legend()
-    saveas(gcf,sprintf('plots/%soriginal_data.png', nam))
-    close(gcf)
+    print(f,sprintf('plots/%soriginal_data.png', nam),'-dpng','-r300');
+    saveas(f,sprintf('plots/%soriginal_data.png', nam))
+    %close(f)
 end
 
 
@@ -62,8 +64,8 @@ fprintf('relative lag is %f lfr samples\n', relative_lag)
 
 
 if plotit==1
-    plot(tt, cutldata,'DisplayName','unshifted LFR data')
-    datetick('x', 'MM:SS:FFF', 'keeplimits', 'keepticks')
+    f = figure('Position', [100 100 1600 1000]);
+    plot(tt, tdata,'DisplayName','TDS data')
     hold on
     if slag>0
          plot(tt(1+slag:end), cutldata(1:end-slag),'DisplayName','shifted LFR data')
@@ -71,14 +73,15 @@ if plotit==1
     if slag<0
          plot(tt(1:end+slag), cutldata(1-slag:end),'DisplayName','shifted LFR data')
     end
-   
-    plot(tt, tdata,'DisplayName','TDS data')
+    datetick('x', 'MM:SS:FFF', 'keeplimits', 'keepticks')
+    plot(tt, cutldata,'DisplayName','unshifted LFR data')
     title(sprintf('TDS and LFR waveforms with an event at %s', wave))
     ylabel('voltage (V)')
     xlabel('time')
     legend()
-    saveas(gcf,sprintf('plots/%sshifted_data.png', nam))
-    %close(gcf)
+    print(f,sprintf('plots/%sshifted_data.png', nam),'-dpng','-r300');
+    %saveas(f,sprintf('plots/%sshifted_data.png', nam))
+    %close(f)
     hold off
 end
 
