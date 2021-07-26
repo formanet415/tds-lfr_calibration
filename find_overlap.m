@@ -3,10 +3,13 @@ function [lags, lagtimes] = find_overlap(date, varargin)
 %lfr and tds data and then plots out both. 
 
 plotit = 1;
+printdelay = 0;
 while ~isempty(varargin)
     switch lower(varargin{1})
         case 'plotit'
             plotit = varargin{2};
+        case 'printdelay'
+            printdelay = varargin{2};
         otherwise
             error(['Unexpected option: ' varargin{1}])
     end
@@ -40,7 +43,7 @@ for i = times
     iT = find_index(i,tds,tdstimes);
     iL = find_index(i,lfr,lfrtimes);
     if iT ~= 0 && iL ~= 0
-        lag = compare_signal(lfr,tds,iT,iL,i, plotit);
+        lag = compare_signal(lfr,tds,iT,iL,i, plotit, printdelay);
         if ~islogical(lag)
             lags(end+1) = lag;
             lagtimes(end+1) = i;

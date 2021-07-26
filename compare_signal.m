@@ -1,4 +1,4 @@
-function tlag = compare_signal(lfr,tds,iT,iL,time, plotit)
+function tlag = compare_signal(lfr,tds,iT,iL,time, plotit, printdelay)
 %COMPARE_SIGNAL Plotter function for both tds and lfr data
 
 tlag = false;
@@ -45,10 +45,11 @@ cutldata = resample(cutldata, p, q);
 slag = lags(lagindx);
 tlag = slag/tsr;
 relative_lag = tlag*lsr;
-fprintf('lag in seconds %es\n',tlag);
-fprintf('relative lag is %f lfr samples\n', relative_lag)
 
-
+if printdelay == 1
+    fprintf('delay between lfr and tds trigger: %fs\n',1e-9*(tt0-lt0))
+end
+    
 if plotit==1
     subplot(2,2,1)
     plot(tt, tdata,'DisplayName','TDS')
@@ -61,7 +62,7 @@ if plotit==1
     end
     datetick('x', 'MM:SS:FFF', 'keeplimits', 'keepticks')
     plot(tt, cutldata,'DisplayName','unshifted LFR data')
-    title('Channel 1 (V1-V2) waveform')
+    title(sprintf('Channel 1 (V1-V2) waveform // calculated lag: %fms', tlag*1e3))
     ylabel('voltage (V)')
     xlabel('time')
     legend()
@@ -89,8 +90,8 @@ cutldata2 = resample(cutldata2, p, q);
 slag = lags(lagindx);
 tlag = slag/tsr;
 relative_lag = tlag*lsr;
-fprintf('CH2 lag in seconds %es\n',tlag);
-fprintf('CH2 relative lag is %f lfr samples\n', relative_lag)
+%fprintf('CH2 lag in seconds %es\n',tlag);
+%fprintf('CH2 relative lag is %f lfr samples\n', relative_lag)
 
 
 if plotit==1
@@ -105,7 +106,7 @@ if plotit==1
     end
     datetick('x', 'MM:SS:FFF', 'keeplimits', 'keepticks')
     plot(tt, cutldata2,'DisplayName','unshifted LFR')
-    title('Channel 2 (V1-V3) waveform')
+    title(sprintf('Channel 2 (V1-V3) waveform // calculated lag: %fms', tlag*1e3))
     ylabel('voltage (V)')
     xlabel('time')
     legend()
