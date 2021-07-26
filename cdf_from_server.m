@@ -5,7 +5,7 @@ if strcmp(type, 'lfr-e')
     if size(fPath) == [1,1]
      	fname = fullfile(fPath.folder, fPath.name);
     elseif size(fPath) == [0,1]
-        disp(['Missing data - file not found: ' fullfile(inputDIR,sprintf('%4i/%02i/solo_L2_rpw-lfr-surv-swf-e-cdag_%4i%02i%02i*',year,month,year,month,day))])
+        disp(['Missing data - file not found: ' fullfile('Z:\rpw\L2\lfr_wf_e',sprintf('%4i/%02i/solo_L2_rpw-lfr-surv-swf-e-cdag_%4i%02i%02i*',year,month,year,month,day))])
     elseif length(fPath) > 1
         disp('multiple files found, choosing highest version')
         names = struct2cell(fPath);

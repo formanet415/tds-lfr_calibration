@@ -20,7 +20,7 @@ tt = spdftt2000todatenum(tt');
 ldata = lfr.EAC.data(:,1,iL);
 tdata = tds.WAVEFORM_DATA_VOLTAGE.data(2,1:tSamps,iT);
 ldata2 = lfr.EAC.data(:,2,iL);
-tdata2 = tds.WAVEFORM_DATA_VOLTAGE.data(1,1:tSamps,iT);
+tdata2 = -tds.WAVEFORM_DATA_VOLTAGE.data(1,1:tSamps,iT);
 
 if lsr<500
     return
@@ -51,7 +51,34 @@ if printdelay == 1
 end
     
 if plotit==1
-    subplot(2,2,1)
+    subplot(2,3,5)
+    plot(tt, tdata,'DisplayName','TDS')
+    hold on
+    plot(lt, ldata,'DisplayName','LFR')
+    datetick('x', 'MM:SS:FFF', 'keeplimits', 'keepticks')
+    xline(time,'DisplayName','wave detected')
+    title('Channel 1 (V1-V2) raw waveforms')
+    ylabel('voltage (V)')
+    xlabel('time')
+    legend()
+    hold off
+    
+    subplot(2,3,2)
+    plot(tt, tdata2,'DisplayName','TDS')
+    hold on
+    plot(lt, ldata2,'DisplayName','LFR')
+    datetick('x', 'MM:SS:FFF', 'keeplimits', 'keepticks')
+    xline(time,'DisplayName','wave detected')
+    title('Channel 2 (V1-V3) raw waveforms')
+    ylabel('voltage (V)')
+    xlabel('time')
+    legend()
+    hold off
+    
+    
+    
+    
+    subplot(2,3,1)
     plot(tt, tdata,'DisplayName','TDS')
     hold on
     if slag>0
@@ -68,7 +95,7 @@ if plotit==1
     legend()
     hold off
 
-    subplot(2,2,2)
+    subplot(2,3,3)
     [tsp, tfq, ~] = make_spectrum(tdata, tSamps, 1./tsr, 100000, 0);
     [lsp, lfq, ~] = make_spectrum(ldata, lSamps, 1./lsr);
     semilogx(tfq(tfq>100),tsp(tfq>100),'DisplayName','TDS')
@@ -95,7 +122,7 @@ relative_lag = tlag*lsr;
 
 
 if plotit==1
-    subplot(2,2,3)
+    subplot(2,3,4)
     plot(tt, tdata2,'DisplayName','TDS')
     hold on
     if slag>0
@@ -112,7 +139,7 @@ if plotit==1
     legend()
     hold off
     
-    subplot(2,2,4)
+    subplot(2,3,6)
     [tsp, tfq, ~] = make_spectrum(tdata2, tSamps, 1./tsr, 100000, 0);
     [lsp, lfq, ~] = make_spectrum(ldata2, lSamps, 1./lsr);
     semilogx(tfq(tfq>100),tsp(tfq>100),'DisplayName','TDS')
@@ -123,7 +150,7 @@ if plotit==1
     xlabel('Frequency (Hz)')
     legend()
 end
-set(gcf, 'Position', [100 100 1600 1000]);
+set(gcf, 'Position', [100 100 2600 1000]);
 print(gcf,sprintf('plots/%stds-lfr.png', nam),'-dpng','-r300');
 close(gcf)
 
