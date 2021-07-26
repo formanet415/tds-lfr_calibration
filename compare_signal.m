@@ -29,37 +29,10 @@ end
 time = spdftt2000todatenum(time);
 wave = spdfencodett2000(time);
 nam = erase(wave,':');
-if plotit==1
-    f = figure('Position', [100 100 1600 1000]);
-    plot(tt, tdata,'DisplayName','TDS data')
-    hold on
-    plot(lt, ldata,'DisplayName','LFR data')
-    datetick('x', 'MM:SS:FFF', 'keeplimits', 'keepticks')
-    xline(time,'DisplayName','wave detected')
-    title(sprintf('TDS and LFR V1-V2 waveforms with an event at %s', wave))
-    ylabel('voltage (V)')
-    xlabel('time')
-    legend()
-    print(f,sprintf('plots/%soriginal_data_CH1.png', nam),'-dpng','-r300');
-    close(f)
-    
-    f = figure('Position', [100 100 1600 1000]);
-    plot(tt, tdata2,'DisplayName','TDS data')
-    hold on
-    plot(lt, ldata2,'DisplayName','LFR data')
-    datetick('x', 'MM:SS:FFF', 'keeplimits', 'keepticks')
-    xline(time,'DisplayName','wave detected')
-    title(sprintf('TDS and LFR V1-V3 waveforms with an event at %s', wave))
-    ylabel('voltage (V)')
-    xlabel('time')
-    legend()
-    print(f,sprintf('plots/%soriginal_data_CH2.png', nam),'-dpng','-r300');
-    close(f)
-end
 
 
-[d, iL0] = min(abs(lt-tt(1)));
-[d, iL1] = min(abs(lt-tt(end)));
+[~, iL0] = min(abs(lt-tt(1)));
+[~, iL1] = min(abs(lt-tt(end)));
 
 cutldata = double(ldata(iL0:iL1));
 p = size(tt,1);
@@ -68,7 +41,7 @@ cutldata = resample(cutldata, p, q);
 
 
 [r,lags] = xcorr(tdata,cutldata);
-[d, lagindx] = max(r);
+[~, lagindx] = max(r);
 slag = lags(lagindx);
 tlag = slag/tsr;
 relative_lag = tlag*lsr;
@@ -77,34 +50,42 @@ fprintf('relative lag is %f lfr samples\n', relative_lag)
 
 
 if plotit==1
-    f = figure('Position', [100 100 1600 1000]);
-    plot(tt, tdata,'DisplayName','TDS data')
+    subplot(2,2,1)
+    plot(tt, tdata,'DisplayName','TDS')
     hold on
     if slag>0
-         plot(tt(1+slag:end), cutldata(1:end-slag),'DisplayName','shifted LFR data')
+         plot(tt(1+slag:end), cutldata(1:end-slag),'DisplayName','shifted LF')
     end
     if slag<0
-         plot(tt(1:end+slag), cutldata(1-slag:end),'DisplayName','shifted LFR data')
+         plot(tt(1:end+slag), cutldata(1-slag:end),'DisplayName','shifted LFR')
     end
     datetick('x', 'MM:SS:FFF', 'keeplimits', 'keepticks')
     plot(tt, cutldata,'DisplayName','unshifted LFR data')
-    title(sprintf('TDS and LFR V1-V2 waveform lag - event at %s', wave))
+    title('Channel 1 (V1-V2) waveform')
     ylabel('voltage (V)')
     xlabel('time')
     legend()
-    print(f,sprintf('plots/%sshifted_data_CH1.png', nam),'-dpng','-r300');
-    %saveas(f,sprintf('plots/%sshifted_data.png', nam))
-    close(f)
     hold off
-end
 
+    subplot(2,2,2)
+    [tsp, tfq, ~] = make_spectrum(tdata, tSamps, 1./tsr, 100000, 0);
+    [lsp, lfq, ~] = make_spectrum(ldata, lSamps, 1./lsr);
+    semilogx(tfq(tfq>100),tsp(tfq>100),'DisplayName','TDS')
+    hold on
+    semilogx(lfq(lfq>100),lsp(lfq>100),'DisplayName','LFR')
+    title('Channel 1 (V1-V2) spectrum')
+    ylabel('PSD (V^{2}/Hz)')
+    xlabel('Frequency (Hz)')
+    legend()
+
+end
 cutldata2 = double(ldata2(iL0:iL1));
 p = size(tt,1);
 q = size(cutldata2,1);
 cutldata2 = resample(cutldata2, p, q);
 
 [r,lags] = xcorr(tdata2,cutldata2);
-[d, lagindx] = max(r);
+[~, lagindx] = max(r);
 slag = lags(lagindx);
 tlag = slag/tsr;
 relative_lag = tlag*lsr;
@@ -113,26 +94,37 @@ fprintf('CH2 relative lag is %f lfr samples\n', relative_lag)
 
 
 if plotit==1
-    f = figure('Position', [100 100 1600 1000]);
-    plot(tt, tdata2,'DisplayName','TDS data')
+    subplot(2,2,3)
+    plot(tt, tdata2,'DisplayName','TDS')
     hold on
     if slag>0
-         plot(tt(1+slag:end), cutldata2(1:end-slag),'DisplayName','shifted LFR data')
+         plot(tt(1+slag:end), cutldata2(1:end-slag),'DisplayName','shifted LFR')
     end
     if slag<0
-         plot(tt(1:end+slag), cutldata2(1-slag:end),'DisplayName','shifted LFR data')
+         plot(tt(1:end+slag), cutldata2(1-slag:end),'DisplayName','shifted LFR')
     end
     datetick('x', 'MM:SS:FFF', 'keeplimits', 'keepticks')
-    plot(tt, cutldata2,'DisplayName','unshifted LFR data')
-    title(sprintf('TDS and LFR V1-V3 waveform lag - event at %s', wave))
+    plot(tt, cutldata2,'DisplayName','unshifted LFR')
+    title('Channel 2 (V1-V3) waveform')
     ylabel('voltage (V)')
     xlabel('time')
     legend()
-    print(f,sprintf('plots/%sshifted_data_CH2.png', nam),'-dpng','-r300');
-    %saveas(f,sprintf('plots/%sshifted_data.png', nam))
-    close(f)
     hold off
+    
+    subplot(2,2,4)
+    [tsp, tfq, ~] = make_spectrum(tdata2, tSamps, 1./tsr, 100000, 0);
+    [lsp, lfq, ~] = make_spectrum(ldata2, lSamps, 1./lsr);
+    semilogx(tfq(tfq>100),tsp(tfq>100),'DisplayName','TDS')
+    hold on
+    semilogx(lfq(lfq>100),lsp(lfq>100),'DisplayName','LFR')
+    title('Channel 2 (V1-V3) spectrum')
+    ylabel('PSD (V^{2}/Hz)')
+    xlabel('Frequency (Hz)')
+    legend()
 end
+set(gcf, 'Position', [100 100 1600 1000]);
+print(gcf,sprintf('plots/%stds-lfr.png', nam),'-dpng','-r300');
+close(gcf)
 
 end
 
