@@ -34,17 +34,18 @@ nam = erase(wave,':');
 [~, iL0] = min(abs(lt-tt(1)));
 [~, iL1] = min(abs(lt-tt(end)));
 
-cutldata = double(ldata(iL0:iL1));
+cutldataog = double(ldata(iL0:iL1));
+cutlSamps = size(double(lt(iL0:iL1)),1);
 p = size(tt,1);
-q = size(cutldata,1);
-cutldata = resample(cutldata, p, q);
+q = size(cutldataog,1);
+cutldata = resample(cutldataog, p, q);
 
 
 [r,lags] = xcorr(tdata,cutldata);
 [~, lagindx] = max(r);
 slag = lags(lagindx);
 tlag = slag/tsr;
-relative_lag = tlag*lsr;
+relative_lag = tlag*lsr; %#ok<NASGU>
 
 if printdelay == 1
     fprintf('delay between lfr and tds trigger: %fs\n',1e-9*(tt0-lt0))
@@ -97,26 +98,26 @@ if plotit==1
 
     subplot(2,3,3)
     [tsp, tfq, ~] = make_spectrum(tdata, tSamps, 1./tsr, 100000, 0);
-    [lsp, lfq, ~] = make_spectrum(ldata, lSamps, 1./lsr);
+    [lsp, lfq, ~] = make_spectrum(cutldataog, cutlSamps, 1./lsr);
     semilogx(tfq(tfq>100),tsp(tfq>100),'DisplayName','TDS')
     hold on
-    semilogx(lfq(lfq>100),lsp(lfq>100),'DisplayName','LFR')
+    loglog(lfq(lfq>100),lsp(lfq>100),'DisplayName','LFR')
     title('Channel 1 (V1-V2) spectrum')
     ylabel('PSD (V^{2}/Hz)')
     xlabel('Frequency (Hz)')
     legend()
 
 end
-cutldata2 = double(ldata2(iL0:iL1));
+cutldata2og = double(ldata2(iL0:iL1));
 p = size(tt,1);
-q = size(cutldata2,1);
-cutldata2 = resample(cutldata2, p, q);
+q = size(cutldata2og,1);
+cutldata2 = resample(cutldata2og, p, q);
 
 [r,lags] = xcorr(tdata2,cutldata2);
 [~, lagindx] = max(r);
 slag = lags(lagindx);
 tlag = slag/tsr;
-relative_lag = tlag*lsr;
+relative_lag = tlag*lsr; %#ok<NASGU>
 %fprintf('CH2 lag in seconds %es\n',tlag);
 %fprintf('CH2 relative lag is %f lfr samples\n', relative_lag)
 
@@ -141,10 +142,10 @@ if plotit==1
     
     subplot(2,3,6)
     [tsp, tfq, ~] = make_spectrum(tdata2, tSamps, 1./tsr, 100000, 0);
-    [lsp, lfq, ~] = make_spectrum(ldata2, lSamps, 1./lsr);
-    semilogx(tfq(tfq>100),tsp(tfq>100),'DisplayName','TDS')
+    [lsp, lfq, ~] = make_spectrum(cutldata2og, cutlSamps, 1./lsr);
+    loglog(tfq,tsp,'DisplayName','TDS')
     hold on
-    semilogx(lfq(lfq>100),lsp(lfq>100),'DisplayName','LFR')
+    loglog(lfq,lsp,'DisplayName','LFR')
     title('Channel 2 (V1-V3) spectrum')
     ylabel('PSD (V^{2}/Hz)')
     xlabel('Frequency (Hz)')
