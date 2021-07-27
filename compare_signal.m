@@ -18,9 +18,9 @@ lt = spdftt2000todatenum(lt');
 tt = spdftt2000todatenum(tt');
 
 ldata = lfr.EAC.data(:,1,iL);
-tdata = tds.WAVEFORM_DATA_VOLTAGE.data(2,1:tSamps,iT);
+tdata = -tds.WAVEFORM_DATA_VOLTAGE.data(2,1:tSamps,iT);
 ldata2 = lfr.EAC.data(:,2,iL);
-tdata2 = -tds.WAVEFORM_DATA_VOLTAGE.data(1,1:tSamps,iT);
+tdata2 = tds.WAVEFORM_DATA_VOLTAGE.data(1,1:tSamps,iT);
 
 if lsr<500
     return
@@ -51,7 +51,7 @@ if printdelay == 1
 end
     
 if plotit==1
-    subplot(2,3,5)
+    subplot(2,3,2)
     plot(tt, tdata,'DisplayName','TDS')
     hold on
     plot(lt, ldata,'DisplayName','LFR')
@@ -63,7 +63,7 @@ if plotit==1
     legend()
     hold off
     
-    subplot(2,3,2)
+    subplot(2,3,5)
     plot(tt, tdata2,'DisplayName','TDS')
     hold on
     plot(lt, ldata2,'DisplayName','LFR')
@@ -82,7 +82,7 @@ if plotit==1
     plot(tt, tdata,'DisplayName','TDS')
     hold on
     if slag>0
-         plot(tt(1+slag:end), cutldata(1:end-slag),'DisplayName','shifted LF')
+         plot(tt(1+slag:end), cutldata(1:end-slag),'DisplayName','shifted LFR')
     end
     if slag<0
          plot(tt(1:end+slag), cutldata(1-slag:end),'DisplayName','shifted LFR')
@@ -149,10 +149,13 @@ if plotit==1
     ylabel('PSD (V^{2}/Hz)')
     xlabel('Frequency (Hz)')
     legend()
-end
-set(gcf, 'Position', [100 100 2600 1000]);
-print(gcf,sprintf('plots/%stds-lfr.png', nam),'-dpng','-r300');
-close(gcf)
 
+    sgt =  sgtitle(sprintf('TDS - LFR comparison, event on %s', nam));
+    sgt.FontSize = 20;
+    sgt.FontWeight = 'bold';
+    set(gcf, 'Position', [100 100 2600 1000]);
+    print(gcf,sprintf('plots/%stds-lfr.png', nam),'-dpng','-r300');
+    close(gcf)
+end
 end
 
