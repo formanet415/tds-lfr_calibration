@@ -1,4 +1,5 @@
 
 *.cdf
 *.asv
-plots/*
+plots/2x*
+plots/o*
