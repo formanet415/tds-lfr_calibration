@@ -99,9 +99,9 @@ if plotit==1
     subplot(2,3,3)
     [tsp, tfq, ~] = make_spectrum(tdata, tSamps, 1./tsr, 100000, 0);
     [lsp, lfq, ~] = make_spectrum(cutldataog, cutlSamps, 1./lsr);
-    semilogx(tfq(tfq>100),tsp(tfq>100),'DisplayName','TDS')
-    hold on
     loglog(lfq(lfq>100),lsp(lfq>100),'DisplayName','LFR')
+    hold on
+    loglog(tfq(tfq>100),tsp(tfq>100),'DisplayName','TDS')
     title('Channel 1 (V1-V2) spectrum')
     ylabel('PSD (V^{2}/Hz)')
     xlabel('Frequency (Hz)')
@@ -143,9 +143,9 @@ if plotit==1
     subplot(2,3,6)
     [tsp, tfq, ~] = make_spectrum(tdata2, tSamps, 1./tsr, 100000, 0);
     [lsp, lfq, ~] = make_spectrum(cutldata2og, cutlSamps, 1./lsr);
-    loglog(tfq,tsp,'DisplayName','TDS')
-    hold on
     loglog(lfq,lsp,'DisplayName','LFR')
+    hold on
+    loglog(tfq,tsp,'DisplayName','TDS')
     title('Channel 2 (V1-V3) spectrum')
     ylabel('PSD (V^{2}/Hz)')
     xlabel('Frequency (Hz)')
