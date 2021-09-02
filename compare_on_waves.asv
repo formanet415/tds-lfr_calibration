@@ -1,0 +1,5 @@
+load('days_with_lags.mat')
+days = string(days);
+
+for i = days
+    date = str2num(replace(temp(1),'-',',')');

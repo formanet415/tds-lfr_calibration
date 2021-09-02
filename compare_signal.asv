@@ -39,7 +39,7 @@ if lsr<500
     return
 end
 
-wave = datestr(spdftt2000todatenum(time), 31);
+wave = datestr((spdftt2000todatenum(time), 'Format', 3);
 nam = erase(wave,':');
 
 
