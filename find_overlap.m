@@ -3,7 +3,7 @@ function [lags, lagtimes] = find_overlap(date, varargin)
 %lfr and tds data and then plots out both. 
 
 plotit = 1;
-printdelay = 0;
+printdelay = 1;
 while ~isempty(varargin)
     switch lower(varargin{1})
         case 'plotit'
@@ -26,17 +26,15 @@ for i = 1:size(wa_times,1)
         times(end+1) = Ep(i);
     end
 end
+times=int64(times);
 if ~ischar(date)
     date = char(date);
 end
-tds = cdf_from_server(str2num(date(1:4)),str2num(date(6:7)),str2num(date(9:10)),'tswf');
-lfr = cdf_from_server(str2num(date(1:4)),str2num(date(6:7)),str2num(date(9:10)),'lfr-e');
-%tds = cdf_load_tswf('cdfs/solo_L2_rpw-tds-surv-tswf-e-cdag_20200718_V26.cdf');
-%lfr = cdf_load_tswf('cdfs/solo_L2_rpw-lfr-surv-swf-e-cdag_20200718_V26.cdf');
+tds = tdscdf_load_l2_surv_tswf(datenum(str2num(date(1:4)),str2num(date(6:7)),str2num(date(9:10))), 1, 1); %#ok<ST2NM>
+lfr = cdf_from_server(str2num(date(1:4)),str2num(date(6:7)),str2num(date(9:10)),'lfr-e'); %#ok<ST2NM>
+lfrtimes = lfr.epoch;
+tdstimes = tds.epoch;
 
-
-tdstimes = spdfdatenumtott2000(tds.Epoch.data);
-lfrtimes = spdfdatenumtott2000(lfr.Epoch.data);
 lags = [];
 lagtimes = [];
 for i = times
@@ -61,11 +59,11 @@ function index = find_index(time,cdf,times)
     if index~=0 
         samps = 2048;
         t='lfr';
-        if isfield(cdf, 'SAMPS_PER_CH')
-            samps = cdf.SAMPS_PER_CH.data(index);
+        if isfield(cdf, 'samples_per_ch')
+            samps = cdf.samples_per_ch(index);
             t='tds';
         end
-        sr = cdf.SAMPLING_RATE.data(index);
+        sr = cdf.samp_rate(index);
         dt = 1e9*(double(samps)/sr);
         if (times(index)+double(dt))<time  
             index = 0;

@@ -22,7 +22,7 @@ if strcmp(type, 'lfr-e')
             error('Selection failed, multiple files with same version found!')
         end
     end
-    cdf = cdf_load_tswf(fname);
+    cdf = lfrcdf_load_l2_surv_lfr_swf_e(fname, 0, 1);
 end
 
 if strcmp(type, 'tswf')
