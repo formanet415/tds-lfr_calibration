@@ -5,6 +5,10 @@ for i = txt'
     disp(i)
     temp = split(i,'_');
     date = str2num(replace(temp(1),'-',',')'); %#ok<ST2NM>
+    if strcmp(i,"")
+        disp('Plotting finshed')
+        return
+    end
     indexes = str2num(temp(2)); %#ok<ST2NM>
     
     tds = tdscdf_load_l2_surv_tswf(datenum(date(1),date(2),date(3)), 1, 1);

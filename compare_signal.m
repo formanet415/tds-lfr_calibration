@@ -65,6 +65,7 @@ if printdelay == 1
 end
 plotit=1;
 if plotit==1
+    fprintf('Plotting indexes tds: %i, lfr: %i\n', iT, iL)
     subplot(2,3,2)
     plot(tt, tdata,'DisplayName','TDS')
     hold on
