@@ -2,7 +2,6 @@ function tlag = compare_signal(lfr,tds,iT,iL,time, plotit, printdelay)
 %COMPARE_SIGNAL Plotter function for both tds and lfr data
 
 %CH12diplen = 7.53; % effective length of L13 and L21
-tlag = false;
 lt0 = lfr.epoch(iL);
 tt0 = tds.epoch(iT);
 lSamps = 2048;
@@ -36,6 +35,7 @@ ldata2 = filter(b,a,dcal_filt);
 tdata2 = tds.voltage_data(1,1:tSamps,iT);
 
 if lsr<500
+    tlag = -1;
     return
 end
 
@@ -53,11 +53,11 @@ q = size(cutldataog,1);
 cutldata = resample(cutldataog, p, q);
 
 % Getting lags from voltage data
-[r,lags] = xcorr(tdata,cutldata);
-[~, lagindx] = max(r);
-slag = lags(lagindx);
-tlag = slag/tsr;
-relative_lag = tlag*lsr; %#ok<NASGU>
+[r1,lags1] = xcorr(tdata,cutldata);
+[~, lagindx1] = max(r1);
+slag1 = lags1(lagindx1);
+tlag1 = slag1/tsr;
+relative_lag1 = tlag1*lsr; %#ok<NASGU>
 
 
 if printdelay == 1
@@ -93,14 +93,14 @@ if plotit==1
     subplot(2,3,1)
     plot(tt, tdata,'DisplayName','TDS')
     hold on
-    if slag>0
-         plot(tt(1+slag:end), cutldata(1:end-slag),'DisplayName','shifted LFR')
+    if slag1>0
+         plot(tt(1+slag1:end), cutldata(1:end-slag1),'DisplayName','shifted LFR')
     end
-    if slag<0
-         plot(tt(1:end+slag), cutldata(1-slag:end),'DisplayName','shifted LFR')
+    if slag1<0
+         plot(tt(1:end+slag1), cutldata(1-slag1:end),'DisplayName','shifted LFR')
     end
     plot(tt, cutldata,'DisplayName','unshifted LFR data')
-    title(sprintf('Channel 1 (V1-V2) waveform // calculated lag: %fms', tlag*1e3))
+    title(sprintf('Channel 1 (V1-V2) waveform // calculated lag: %fms', tlag1*1e3))
     ylabel('voltage (V)')
     xlabel(sprintf('time since %s (ns)', wave))
     legend()
@@ -126,13 +126,16 @@ q = size(cutldata2og,1);
 cutldata2 = resample(cutldata2og, p, q);
 
 %second channel lags
-[r,lags] = xcorr(tdata2,cutldata2);
-[~, lagindx] = max(r);
-slag = lags(lagindx);
+[r2,lags2] = xcorr(tdata2,cutldata2);
+[~, lagindx2] = max(r2);
+slag2 = lags2(lagindx2);
+tlag2 = slag2/tsr;
+relative_lag = tlag2*lsr; %#ok<NASGU>
+
+
+[~, lagindx] = max(r1+r2);
+slag = lags1(lagindx);
 tlag = slag/tsr;
-relative_lag = tlag*lsr; %#ok<NASGU>
-
-
 %fprintf('CH2 lag in seconds %es\n',tlag);
 %fprintf('CH2 relative lag is %f lfr samples\n', relative_lag)
 
@@ -141,14 +144,14 @@ if plotit==1
     subplot(2,3,4)
     plot(tt, tdata2,'DisplayName','TDS')
     hold on
-    if slag>0
-         plot(tt(1+slag:end), cutldata2(1:end-slag),'DisplayName','shifted LFR')
+    if slag2>0
+         plot(tt(1+slag2:end), cutldata2(1:end-slag2),'DisplayName','shifted LFR')
     end
-    if slag<0
-         plot(tt(1:end+slag), cutldata2(1-slag:end),'DisplayName','shifted LFR')
+    if slag2<0
+         plot(tt(1:end+slag2), cutldata2(1-slag2:end),'DisplayName','shifted LFR')
     end
     plot(tt, cutldata2,'DisplayName','unshifted LFR')
-    title(sprintf('Channel 2 (V1-V3) waveform // calculated lag: %fms', tlag*1e3))
+    title(sprintf('Channel 2 (V1-V3) waveform // calculated lag: %fms', tlag2*1e3))
     ylabel('voltage (V)')
     xlabel(sprintf('time since %s (ns)', wave))
     legend()

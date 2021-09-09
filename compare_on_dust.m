@@ -1,5 +1,6 @@
 fileID = fopen('solo_dust.txt','r');
 txt = split(string(fscanf(fileID,'%s')),'`');
+dust_lags = [];
 
 for i = txt'
     disp(i)
@@ -10,7 +11,6 @@ for i = txt'
         return
     end
     indexes = str2num(temp(2)); %#ok<ST2NM>
-    
     tds = tdscdf_load_l2_surv_tswf(datenum(date(1),date(2),date(3)), 1, 1);
     lfr = cdf_from_server(date(1),date(2),date(3),'lfr-e');
     lfrtimes = lfr.epoch;
@@ -29,7 +29,8 @@ for i = txt'
             if (lfrtimes(index)+double(dt))<tt0  
                 index = 0;
             else
-                lag = compare_signal(lfr,tds,j,index,tt0, 1, 1);
+                lag = compare_signal(lfr,tds,j,index,tt0, 1, 0);
+                dust_lags(end+1)=lag; 
             end
         end
     end

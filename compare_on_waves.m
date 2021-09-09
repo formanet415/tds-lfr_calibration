@@ -1,6 +1,6 @@
 load('days_with_lags.mat')
 days = string(days)';
-
+lags=[];
 for i = days
     date = str2num(replace(i,'-',',')');
     
@@ -24,7 +24,8 @@ for i = days
             if (lfrtimes(index)+double(dt))<tt0  
                 index = 0;
             else
-                lag = compare_signal(lfr,tds,j,index,tt0, 1, 1);
+                slag = compare_signal(lfr,tds,j,index,tt0, 1, 0);
+                lags(end+1)=slag; %#ok<SAGROW>
             end
         end
     end
