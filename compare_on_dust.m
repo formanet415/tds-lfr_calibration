@@ -1,6 +1,7 @@
 fileID = fopen('solo_dust.txt','r');
 txt = split(string(fscanf(fileID,'%s')),'`');
 dust_lags = [];
+setenv('OKF', 'Z:')
 
 for i = txt'
     disp(i)
@@ -16,9 +17,6 @@ for i = txt'
     lfrtimes = lfr.epoch;
     for j = indexes
         tt0 = (tds.epoch(j));
-        tsr = tds.samp_rate(j);
-        dt = int64(1e9*(double(tds.samp_rate(j))/tsr));
-        tt1 = tt0+dt;
         [d, index] = min(abs(lfrtimes-tt0));
         if lfrtimes(index) > tt0 
             index = index-1;
@@ -29,8 +27,11 @@ for i = txt'
             if (lfrtimes(index)+double(dt))<tt0  
                 index = 0;
             else
-                lag = compare_signal(lfr,tds,j,index,tt0, 1, 0);
-                dust_lags(end+1)=lag; 
+                [lag1, lag2] = compare_signal(lfr,tds,j,index,tt0, 0, 0);
+                if lag1 ~= -1
+                    dust_lags(end+1)=lag1; %#ok<SAGROW>
+                    dust_lags(end+1)=lag2; %#ok<SAGROW>
+                end
             end
         end
     end

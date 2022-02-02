@@ -3,3 +3,4 @@
 *.asv
 plots/2x*
 plots/o*
+*.ipynb

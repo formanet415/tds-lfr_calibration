@@ -1,4 +1,4 @@
-function tlag = compare_signal(lfr,tds,iT,iL,time, plotit, printdelay)
+function [tlag1,tlag2] = compare_signal(lfr,tds,iT,iL,time, plotit, printdelay)
 %COMPARE_SIGNAL Plotter function for both tds and lfr data
 
 %CH12diplen = 7.53; % effective length of L13 and L21
@@ -18,24 +18,24 @@ t00=min(tt0,lt0);
 lt = (lt')-t00;
 tt = (tt')-t00;
 
+% LFR DATA
 ldata = lfr.data(:,1,iL); % lfr - voltage
-
 [b,a] = rc_filter(15e3, 47e-9, lfr.samp_rate(iL), 'high');
 dcal_filt = filter(b,a,ldata);
 ldata = filter(b,a,dcal_filt);
-
-tdata = -tds.voltage_data(2,1:tSamps,iT); % Voltage data
 % Channel 2
 ldata2 = lfr.data(:,2,iL);
-
 [b,a] = rc_filter(15e3, 47e-9, lfr.samp_rate(iL), 'high');
 dcal_filt = filter(b,a,ldata2);
 ldata2 = filter(b,a,dcal_filt);
 
+% TDS DATA
+tdata = -tds.voltage_data(2,1:tSamps,iT); % Voltage data
 tdata2 = tds.voltage_data(1,1:tSamps,iT);
 
 if lsr<500
-    tlag = -1;
+    tlag1 = -1;
+    tlag2 = -1;
     return
 end
 
@@ -57,13 +57,12 @@ cutldata = resample(cutldataog, p, q);
 [~, lagindx1] = max(r1);
 slag1 = lags1(lagindx1);
 tlag1 = slag1/tsr;
-relative_lag1 = tlag1*lsr; %#ok<NASGU>
 
 
 if printdelay == 1
     fprintf('delay between lfr and tds trigger: %fs\n',1e-9*(tt0-lt0))
 end
-plotit=1;
+%plotit=1;
 if plotit==1
     fprintf('Plotting indexes tds: %i, lfr: %i\n', iT, iL)
     subplot(2,3,2)
@@ -130,12 +129,8 @@ cutldata2 = resample(cutldata2og, p, q);
 [~, lagindx2] = max(r2);
 slag2 = lags2(lagindx2);
 tlag2 = slag2/tsr;
-relative_lag = tlag2*lsr; %#ok<NASGU>
 
 
-[~, lagindx] = max(r1+r2);
-slag = lags1(lagindx);
-tlag = slag/tsr;
 %fprintf('CH2 lag in seconds %es\n',tlag);
 %fprintf('CH2 relative lag is %f lfr samples\n', relative_lag)
 

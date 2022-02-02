@@ -26,7 +26,7 @@ yline(lsp, 'color', 'red')
 legend('lags','mean','median','lfr sampling period')
 
 set(gcf, 'Position', [100 100 1200 700]);
-print(gcf,sprintf('TDS-LFR_%s_lags.png', type),'-dpng','-r300');
+print(gcf,sprintf('TDS-LFR_%s_lags_v3.png', type),'-dpng','-r300');
 close(gcf)
 
 stem(lags/lsp)
@@ -40,7 +40,7 @@ yline(1, 'color', 'red')
 legend('lags','mean','median','lfr sampling period')
 
 set(gcf, 'Position', [100 100 1200 700]);
-print(gcf,sprintf('TDS-LFR_%s_lags_2.png', type),'-dpng','-r300');
+print(gcf,sprintf('TDS-LFR_%s_lags_2_v3.png', type),'-dpng','-r300');
 close(gcf)
 end
 
