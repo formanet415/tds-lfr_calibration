@@ -4,3 +4,4 @@
 plots/2x*
 plots/o*
 *.ipynb
+.ipynb_checkpoints/*
