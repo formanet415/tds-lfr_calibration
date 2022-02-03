@@ -18,5 +18,4 @@ for i = days
             end
         end
     end
-    
 end
