@@ -1,8 +1,8 @@
 function lag = compare_TDS_signal(vt, wf,tsr)
-%COMPARE_SIGNAL Plotter function for both tds and lfr data
+%COMPARE_SIGNAL 
 
 
-% Getting lags from voltage data
+% Getting lags from TDS data
 [r1,lags1] = xcorr(vt,wf);
 [~, lagindx1] = max(r1);
 slag1 = lags1(lagindx1);
